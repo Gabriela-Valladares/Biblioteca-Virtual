@@ -7,59 +7,92 @@ use Illuminate\Http\Request;
 
 class UsuarioController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $usuario = Usuario::all(); 
+        return view('Usuarios.index')->with('usuarios',$usuario);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('Usuarios.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|regex:/^[a-zA-Z\0-9\s\áÁéÉíÍóÓpLñÑ\.]+$/',
+            'correo_electronico' => 'required|unique:usuarios',
+            'telefono' => ['required','regex:/^[a-zA-Z\0-9\s\áÁéÉíÍóÓpLñÑ\.]+$/'],
+            'direccion' => 'required',
+        
+        ], [
+            'nombre.required' => 'El nombre es requerido',
+            'nombre.regex' => 'El nombre tiene caracteres no permitidos',
+            'correo_electronico.required' => 'El correo electronico es requerido',
+            'correo_electronico.regex' => 'El correo electronico tiene caracteres no permitidos',
+            'telefono.required' => 'El telefono es requerido',
+            'direccion.required' => 'La direccion de publicacion  es requerido',
+        ]);
+
+        
+        $usuario = new Usuario(); 
+        $usuario->nombre=$request->input('nombre');
+        $usuario->correo_electronico=$request->input('correo_electronico');
+        $usuario->telefono=$request->input('telefono');
+        $usuario->direccion=$request->input('direccion');
+
+        $usuario->save(); 
+
+        return redirect()->route('usuario.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Usuario $usuario)
+    public function show($id)
     {
-        //
+        $usuario = Usuario::findOrfail($id); 
+        return view('Usuarios.show' , compact('usuarios'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Usuario $usuario)
+
+    public function edit($id)
     {
-        //
+        $usuario = Usuario::findOrfail($id);
+        return view('Usuarios.edit')->with('usuarios',$usuario);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Usuario $usuario)
+    public function update(Request $request, $id)
     {
-        //
+        $usuario = Usuario::findOrfail($id); 
+
+        $request->validate([
+            'nombre' => 'required|regex:/^[a-zA-Z\0-9\s\áÁéÉíÍóÓpLñÑ\.]+$/',
+            'correo_electronico' => 'required|string',
+            'telefono' => ['required','regex:/^[a-zA-Z\0-9\s\áÁéÉíÍóÓpLñÑ\.]+$/'],
+            'direccion' => 'required',
+            
+        ], [
+            'nombre.required' => 'El nombrees requerido',
+            'nombre.regex' => 'El nombre tiene caracteres no permitidos',
+            'correo_electronico.required' => 'El correo electronico es requerido',
+            'correo_electronico.regex' => 'El correo electronico tiene caracteres no permitidos',
+            'telefono.required' => 'El telefono es requerido',
+            'direccion.required' => 'La direccion de publicacion  es requerido',
+        ]);
+        
+        $usuario->nombre=$request->input('nombre');
+        $usuario->correo_electronico=$request->input('correo_electronico');
+        $usuario->telefono=$request->input('telefono');
+        $usuario->direccion=$request->input('direccion');
+
+        $usuario->save(); 
+
+        return redirect()->route('usuarios.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Usuario $usuario)
+
+    public function destroy($id)
     {
-        //
+        Usuario::destroy($id);
+        return redirect()->route('usuario.index');
     }
 }

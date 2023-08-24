@@ -17,11 +17,11 @@ class LibroFactory extends Factory
     public function definition(): array
     {
         return [
-            'titulo'=>fake()->text(),
-            'autor'=>fake()->text(),
-            'editorial'=>fake()->word(),
-            'ano_publicacion'=>fake()->numerify('####'),
-            'cantidad_disponible'=>fake()->numerify('###'),
+            'Titulo'=>fake()->text(),
+            'Autor'=>fake()->text(),
+            'Editorial'=>fake()->word(),
+            'Ano_de_publicacion'=>fake()->numerify('####'),
+            'Cantidad_Disponible'=>fake()->numerify('###'),
         ];
     }
 }

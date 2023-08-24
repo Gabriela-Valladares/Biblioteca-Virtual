@@ -7,59 +7,97 @@ use Illuminate\Http\Request;
 
 class PrestamoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $prestamo = Prestamo::all(); 
+        return view('Prestamos.index')->with('prestamos',$prestamo);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('Prestamos.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+        'fecha_solicitud' => 'required|date',
+        'fecha_prestamo' => 'required|date',
+        'fecha_devolucion' => ['required', 'date'],
+        'libro_id' => 'required|numeric',
+        'usuario_id' => 'required|numeric',
+
+    ], [
+        'fecha_solicitud.required' => 'El fecha_solicitud es requerido',
+            'fecha_solicitud.regex' => 'El fecha_solicitud tiene caracteres no permitidos',
+            'fecha_prestamo.required' => 'El fecha_prestamoes requerido',
+            'fecha_prestamo.regex' => 'El fecha_prestamo tiene caracteres no permitidos',
+            'fecha_devolucion.required' => 'la fecha de devolucion requerido',
+            'libro_id.required' => 'El libro_id  es requerido',
+        
+        
+    ]);
+        
+        $prestamo = new Prestamo(); 
+        $prestamo->fecha_solicitud=$request->input('fecha_solicitud');
+        $prestamo->fecha_prestamo=$request->input('fecha_prestamo');
+        $prestamo->fecha_devolucion=$request->input('fecha_devolucion');
+        $prestamo->libro_id=$request->input('libro_id');
+        $prestamo->usuario_id=$request->input('usuario_id');
+    
+        $prestamo->save(); 
+
+        return redirect()->route('prestamo.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Prestamo $prestamo)
+    public function show($id)
     {
-        //
+        $prestamo = Prestamo::findOrfail($id); 
+        return view('Prestamos.show' , compact('prestamos'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Prestamo $prestamo)
+    public function edit($id)
     {
-        //
+        $prestamo = Prestamo::findOrfail($id); 
+        return view('prestamos.edit')->with('prestamos',$prestamo);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Prestamo $prestamo)
+    public function update(Request $request, $id)
     {
-        //
+        $prestamo = Prestamo::findOrfail($id); 
+
+        $request->validate([
+            'fecha_solicitud' => 'required|date',
+            'fecha_prestamo' => 'required|date',
+            'fecha_devolucion' => ['required|date'],
+            'libro_id' => 'required|numeric',
+            'usuario_id' => 'required|numeric',
+        
+        ], [
+            'fecha_solicitud.required' => 'El fecha_solicitud es requerido',
+            'fecha_solicitud.regex' => 'El fecha_solicitud tiene caracteres no permitidos',
+            'fecha_prestamo.required' => 'El fecha_prestamoes requerido',
+            'fecha_prestamo.regex' => 'El fecha_prestamo tiene caracteres no permitidos',
+            'fecha_devolucion.required' => 'la fecha de devolucion requerido',
+            'libro_id.required' => 'El libro_id  es requerido',
+            
+            
+        ]);
+    
+        $prestamo->fecha_solicitud=$request->input('fecha_solicitud');
+        $prestamo->fecha_prestamo=$request->input('fecha_prestamo');
+        $prestamo->fecha_devolucion=$request->input('fecha_devolucion');
+        $prestamo->libro_id=$request->input('libro_id');
+        $prestamo->usuario_id=$request->input('usuario_id');
+        
+        $prestamo->save(); 
+
+        return redirect()->route('prestamos.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Prestamo $prestamo)
+    public function destroy($id)
     {
-        //
+        Prestamo::destroy($id);
+    return redirect()->route('libro.index');
     }
 }
